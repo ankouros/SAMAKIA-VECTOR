@@ -1,0 +1,4 @@
+node_modules/
+agent/memory/
+agent/logs/
+data/

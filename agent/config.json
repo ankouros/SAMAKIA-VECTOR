@@ -1,0 +1,10 @@
+{
+  "projectName": "samakia-vector",
+  "repoRoot": "/home/aggelos/SAMAKIA-VECTOR",
+  "buildCmd": null,
+  "testCmd": null,
+  "deployCmd": "docker compose up -d",
+  "healthUrl": "http://localhost:6333/healthz",
+  "specsApiBase": "http://localhost:33091",
+  "dryRun": false
+}
