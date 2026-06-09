@@ -11,44 +11,48 @@ services:
     volumes:
       - ./data/qdrant-1:/qdrant/storage
     environment:
-      QDRANT__CLUSTER__ENABLED: "true"
-      QDRANT__CLUSTER__P2P__PORT: 6335
+      QDRANT__SERVICE__HTTP_PORT: 6333
       QDRANT__SERVICE__GRPC_PORT: 6334
     networks:
       - samakia-edge-net
       - vector-internal
 
+
   qdrant-2:
     image: qdrant/qdrant:latest
     container_name: samakia-vector-2
     restart: unless-stopped
+    ports:
+      - "6335:6333"
     volumes:
       - ./data/qdrant-2:/qdrant/storage
     environment:
-      QDRANT__CLUSTER__ENABLED: "true"
-      QDRANT__CLUSTER__P2P__PORT: 6335
-      QDRANT__CLUSTER__BOOTSTRAP: "http://qdrant-1:6335"
+      QDRANT__SERVICE__HTTP_PORT: 6333
       QDRANT__SERVICE__GRPC_PORT: 6334
     depends_on:
-      - qdrant-1
+      qdrant-1:
+        condition: service_started
     networks:
       - vector-internal
+
 
   qdrant-3:
     image: qdrant/qdrant:latest
     container_name: samakia-vector-3
     restart: unless-stopped
+    ports:
+      - "6336:6333"
     volumes:
       - ./data/qdrant-3:/qdrant/storage
     environment:
-      QDRANT__CLUSTER__ENABLED: "true"
-      QDRANT__CLUSTER__P2P__PORT: 6335
-      QDRANT__CLUSTER__BOOTSTRAP: "http://qdrant-1:6335"
+      QDRANT__SERVICE__HTTP_PORT: 6333
       QDRANT__SERVICE__GRPC_PORT: 6334
     depends_on:
-      - qdrant-1
+      qdrant-1:
+        condition: service_started
     networks:
       - vector-internal
+
 
 networks:
   samakia-edge-net:

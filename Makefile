@@ -23,3 +23,15 @@ index: ## Run ecosystem indexer
 
 index-repo: ## Index a single repo (REPO=name)
 	REPOS=$(REPO) node scripts/index-ecosystem.mjs
+
+test: ## Run cluster verification tests
+	bash tests/verify-cluster.sh
+
+monitor-install: ## Install 24/7 health monitor cron (every 5 min)
+	@(crontab -l 2>/dev/null | grep -v '# SAMAKIA_VECTOR_MONITOR'; \
+	  echo "*/5 * * * * curl -sf http://localhost:6333/healthz >/dev/null || (cd /home/aggelos/SAMAKIA-VECTOR && docker compose up -d) # SAMAKIA_VECTOR_MONITOR") | crontab -
+	@echo "[OK] monitor cron installed (every 5min, auto-restart on failure)"
+
+monitor-remove: ## Remove monitor cron
+	@(crontab -l 2>/dev/null | grep -v '# SAMAKIA_VECTOR_MONITOR') | crontab -
+	@echo "[OK] monitor cron removed"
