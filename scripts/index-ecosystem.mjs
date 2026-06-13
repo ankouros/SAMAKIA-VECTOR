@@ -6,9 +6,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
+import { createOllamaClient } from '@samakia/ollama-client';
+
 const QDRANT_URL = process.env.QDRANT_URL || 'http://localhost:6333';
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://192.168.11.30:11434';
 const EMBED_MODEL = process.env.EMBED_MODEL || 'nomic-embed-text';
+const ollamaClient = createOllamaClient(OLLAMA_URL);
 const WORKSPACE = process.env.WORKSPACE || '/home/aggelos';
 const CACHE_FILE = path.join(import.meta.dirname, '..', 'data', 'index-cache.json');
 const VECTOR_DIM = 768;
@@ -25,9 +28,8 @@ function pointId(str) { return parseInt(crypto.createHash('md5').update(str).dig
 
 async function embed(text) {
   try {
-    const r = await fetch(`${OLLAMA_URL}/api/embeddings`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:EMBED_MODEL,prompt:text.slice(0,2000)})});
-    if (!r.ok) return null;
-    return (await r.json()).embedding;
+    const result = await ollamaClient.embed(text.slice(0, 2000), EMBED_MODEL);
+    return result.embedding;
   } catch { return null; }
 }
 
